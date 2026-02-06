@@ -1,0 +1,42 @@
+# Environment
+.env
+.env.local
+
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Logs
+logs/
+*.log
+
+# Data (keep structure, ignore contents)
+data/cache/*
+!data/cache/.gitkeep
+
+# Qdrant local storage
+qdrant_storage/

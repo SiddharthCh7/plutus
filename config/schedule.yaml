@@ -1,0 +1,46 @@
+# Task Scheduler Configuration
+# Each task runs independently with its own cron schedule
+
+tasks:
+  # Portfolio monitoring - checks your holdings
+  portfolio_monitor:
+    enabled: true
+    start_time: "09:00"  # IST - market open
+    frequency_mins: 60   # Every hour during market
+    end_time: "16:00"    # IST - market close
+    agents:
+      - portfolio_tracker
+      - news_monitor
+      - risk_assessor
+    description: "Monitor portfolio holdings and generate exit signals"
+    
+  # Opportunity discovery - find new investment ideas
+  opportunity_discovery:
+    enabled: true
+    start_time: "08:00"
+    frequency_mins: 240  # Every 4 hours
+    agents:
+      - news_monitor
+      - market_analyst
+      - opportunity_scout
+      - trend_interpreter
+    description: "Discover undervalued stocks and emerging trends"
+    
+  # News digest - keeps news cache fresh (shared by other tasks)
+  news_digest:
+    enabled: true
+    start_time: "07:00"
+    frequency_mins: 30   # Every 30 mins
+    agents:
+      - news_monitor
+    description: "Fetch and cache latest market news"
+
+# Timezone for all schedules
+timezone: "Asia/Kolkata"
+
+# Global settings
+settings:
+  max_concurrent_tasks: 2
+  retry_on_failure: true
+  retry_delay_seconds: 30
+  max_retries: 3

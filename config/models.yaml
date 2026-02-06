@@ -1,0 +1,42 @@
+# Model Router Configuration
+# Default: Gemini 2.0 Flash (can be changed at runtime)
+
+default_provider: gemini
+default_model: gemini-2.5-flash
+
+providers:
+  gemini:
+    api_key_env: GOOGLE_API_KEY
+    models:
+      - name: gemini-2.5-flash
+        description: Fast, efficient for most tasks
+      - name: gemini-2.5-pro
+        description: Most capable, use for complex reasoning
+      
+  openai:
+    api_key_env: OPENAI_API_KEY
+    models:
+      - name: gpt-4o
+        description: Most capable OpenAI model
+      - name: gpt-4o-mini
+        description: Fast and cost-effective
+      
+  anthropic:
+    api_key_env: ANTHROPIC_API_KEY
+    models:
+      - name: claude-3-5-sonnet-latest
+        description: Excellent for analysis and reasoning
+
+# Agent-specific model overrides (optional)
+# Uncomment to use different models per agent
+# agent_models:
+#   coordinator: gemini-2.5-pro
+#   news_monitor: gemini-2.5-flash
+#   risk_assessor: gemini-2.5-pro
+
+# Summarization model (can be specialized for lossless summaries)
+# Will support fine-tuned models from OpenRouter/Ollama in future
+summarization:
+  provider: gemini
+  model: gemini-2.5-flash
+  # Future: model: openrouter/your-fine-tuned-summarizer

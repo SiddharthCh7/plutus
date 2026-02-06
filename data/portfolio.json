@@ -1,0 +1,58 @@
+{
+  "holdings": [
+    {
+      "ticker": "KELLTONTEC.NS",
+      "buy_price": 20.35,
+      "quantity": 150,
+      "buy_date": "2025-01-15",
+      "sector": "Technology",
+      "notes": "Investing for long term hold after finding out they are a semi-condutors company.",
+      "target_price": 500.00
+    },
+    {
+      "ticker": "ADANIGREEN.NS",
+      "buy_price": 954,
+      "quantity": 5,
+      "buy_date": "2026-02-04",
+      "sector": "Green Energy",
+      "notes": "Investing for long term hold after finding out their recent partnership with Google.",
+      "target_price": 3000.00
+    },
+    {
+      "ticker": "GOLDBEES.NS",
+      "buy_price": 77.27,
+      "quantity": 26,
+      "buy_date": "2025-09-24",
+      "sector": "Commodity",
+      "notes": "Investing for long term hold betting on gold.",
+      "target_price": 500.00
+    },
+    {
+      "ticker": "LIQUIDCASE.NS",
+      "buy_price": 108.08,
+      "quantity": 16,
+      "buy_date": "2025-04-14",
+      "sector": "Unknown",
+      "notes": "Investing for long term.",
+      "target_price": 500.00
+    },
+    {
+      "ticker": "MOM100.NS",
+      "buy_price": 62.47,
+      "quantity": 21,
+      "buy_date": "2025-02-14",
+      "sector": "Unknown",
+      "notes": "Investing for long term.",
+      "target_price": 500.00
+    },
+    {
+      "ticker": "NIFTYBEES.NS",
+      "buy_price": 255.73,
+      "quantity": 8,
+      "buy_date": "2025-01-14",
+      "sector": "Unknown",
+      "notes": "Investing for long term.",
+      "target_price": 700.00
+    }
+  ]
+}
