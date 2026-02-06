@@ -1,4 +1,4 @@
-# Plutus - Personal Financial Portfolio Manager
+# Plutus - AI-Powered Investment Research & Portfolio Monitoring Assistant
 
 A multi-agent AI system for intelligent investment analysis, portfolio monitoring, and opportunity discovery.
 
@@ -49,6 +49,3 @@ uv run plutus
 - **Yahoo Finance** - Market data
 - **structlog** - Structured logging
 
-## License
-
-MIT
