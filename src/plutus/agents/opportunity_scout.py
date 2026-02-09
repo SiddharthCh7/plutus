@@ -2,12 +2,19 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
+import json
 
 from plutus.agents.base import BaseAgent
 from plutus.logging import get_logger
 
 logger = get_logger(__name__)
+
+# Load info.json for sectors to scout
+INFO_PATH = Path(__file__).parent.parent.parent.parent / "data" / "info.json"
+with open(INFO_PATH) as f:
+    INFO_DATA = json.load(f)
 
 
 class OpportunityScoutAgent(BaseAgent):
@@ -29,15 +36,14 @@ class OpportunityScoutAgent(BaseAgent):
     token_budget = 4000
     
     def get_system_prompt(self) -> str:
-        return """You are an investment opportunity scout focused on LONG-TERM value investing.
+        sectors = INFO_DATA.get("sectors_to_scout", [])
+        sectors_list = "\n".join(f"- {sector}" for sector in sectors)
+        return f"""You are an investment opportunity scout focused on LONG-TERM value investing.
 
 Your task is to identify undervalued stocks with high future potential.
 
 Focus areas:
-1. Green energy / renewable sector
-2. Semiconductors
-3. Commodities
-4. Companies benefiting indirectly from major trends
+{sectors_list}
 
 For each opportunity, provide:
 - Ticker and company name
@@ -73,14 +79,7 @@ Be selective - only recommend high-conviction opportunities."""
         built_context = builder.build()
         
         # Invoke LLM
-        user_message = """Based on current news and trends, identify 3-5 investment opportunities.
-
-Focus on:
-1. Stocks that benefit from current trends but are not yet fully priced in
-2. Companies in green energy, semiconductors, or commodities
-3. Long-term value plays (1-3 year horizon)
-
-Be specific about WHY each is an opportunity."""
+        user_message = "Find investment opportunities based on the provided news and trends."
 
         response = await self.invoke_llm(
             user_message=user_message,

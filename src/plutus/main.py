@@ -195,12 +195,12 @@ def portfolio():
         table.add_row(
             h.ticker,
             str(h.quantity),
-            f"${h.buy_price:.2f}" if h.buy_price else "N/A",
+            f"{h.buy_price:.2f}" if h.buy_price else "N/A",
             h.sector or "-",
         )
     
     console.print(table)
-    console.print(f"\n[green]Total Investment:[/green] ${p.total_investment:,.2f}")
+    console.print(f"\n[green]Total Investment:[/green] {p.total_investment:,.2f}")
 
 
 @app.command()

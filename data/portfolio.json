@@ -7,7 +7,7 @@
       "buy_date": "2025-01-15",
       "sector": "Technology",
       "notes": "Investing for long term hold after finding out they are a semi-condutors company.",
-      "target_price": 500.00
+      "target_price": 200.00
     },
     {
       "ticker": "ADANIGREEN.NS",
@@ -25,7 +25,7 @@
       "buy_date": "2025-09-24",
       "sector": "Commodity",
       "notes": "Investing for long term hold betting on gold.",
-      "target_price": 500.00
+      "target_price": 300.00
     },
     {
       "ticker": "LIQUIDCASE.NS",
@@ -34,7 +34,7 @@
       "buy_date": "2025-04-14",
       "sector": "Unknown",
       "notes": "Investing for long term.",
-      "target_price": 500.00
+      "target_price": 350.00
     },
     {
       "ticker": "MOM100.NS",
@@ -43,7 +43,7 @@
       "buy_date": "2025-02-14",
       "sector": "Unknown",
       "notes": "Investing for long term.",
-      "target_price": 500.00
+      "target_price": 300.00
     },
     {
       "ticker": "NIFTYBEES.NS",
@@ -53,6 +53,15 @@
       "sector": "Unknown",
       "notes": "Investing for long term.",
       "target_price": 700.00
+    },
+    {
+      "ticker": "NTPC.NS",
+      "buy_price": 365.05,
+      "quantity": 10,
+      "buy_date": "2026-02-08",
+      "sector": "Energy",
+      "notes": "Investing for long term, trusting its scale and government's commitment and emphasis towards energy sector.",
+      "target_price": 1000.00
     }
   ]
 }

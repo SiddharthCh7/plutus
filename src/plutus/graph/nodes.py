@@ -256,7 +256,7 @@ async def report_generator_node(state: PlutusState) -> dict:
                         change = data.get("change_percent", 0)
                         change_icon = "🟢" if change >= 0 else "🔴"
                         market_lines.append(
-                            f"  {ticker}: ₹{data['price']:.2f} {change_icon} {change:+.2f}%"
+                            f"  {ticker}: {data['price']:.2f} {change_icon} {change:+.2f}%"
                         )
                 if market_lines:
                     portfolio_section += "\n\n### Current Prices\n" + "\n".join(market_lines)

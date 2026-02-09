@@ -1,0 +1,13 @@
+{
+    "sectors_to_scout": [
+        "Energy",
+        "AI",
+        "Robotics and Automation",
+        "Renewable Energy",
+        "Healthcare Technology",
+        "FinTech and E-Commerce",
+        "Infrastructure and Data Centers",
+        "Semi-Conductors",
+        "Commodity"
+    ]
+}
