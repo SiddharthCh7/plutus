@@ -19,10 +19,11 @@ def get_project_root() -> Path:
     """Get the project root directory.
     
     Path: __file__ is config.py
-    -> parent is plutus/
-    -> parent is src/
     -> parent is plutus (project root)
     """
+    if root := os.getenv("PLUTUS_ROOT"):
+        return Path(root)
+        
     return Path(__file__).parent.parent.parent
 
 
