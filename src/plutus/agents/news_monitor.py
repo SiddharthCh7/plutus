@@ -47,13 +47,18 @@ Never include full article text - only summarized insights."""
         tickers = context.get("portfolio_tickers", [])
         
         # Fetch news
+        # Fetch news - try 7 days first, then fallback to 30 days
         logger.info("Fetching news", tickers=tickers)
-        raw_news = await fetch_news_for_tickers(tickers)
+        raw_news = await fetch_news_for_tickers(tickers, days_back=7)
+        
+        if not raw_news:
+            logger.info("No recent news found, trying 30 day window", tickers=tickers)
+            raw_news = await fetch_news_for_tickers(tickers, days_back=30)
         
         if not raw_news:
             logger.info("No news found")
             return {
-                "news_digest": "No relevant news found.",
+                "news_digest": "No news found in the last 30 days.",
                 "top_news_items": [],
             }
         

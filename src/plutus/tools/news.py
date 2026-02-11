@@ -54,26 +54,57 @@ class YahooFinanceNews(NewsProvider):
     ) -> list[dict[str, Any]]:
         """Fetch news from Yahoo Finance."""
         all_news = []
+        total_fetched = 0
         cutoff_date = datetime.now() - timedelta(days=days_back)
         
         for ticker in tickers:
             try:
                 stock = yf.Ticker(ticker)
                 news = stock.news or []
+                total_fetched += len(news)
                 
                 for item in news:
-                    # Parse timestamp
-                    pub_time = item.get("providerPublishTime", 0)
-                    pub_date = datetime.fromtimestamp(pub_time)
+                    # yfinance nests data under 'content' key
+                    content = item.get("content", item)
+                    
+                    # Parse timestamp (ISO format string, e.g. "2026-02-10T14:46:24Z")
+                    pub_date_str = content.get("pubDate") or content.get("displayTime", "")
+                    if pub_date_str:
+                        try:
+                            pub_date = datetime.fromisoformat(
+                                pub_date_str.replace("Z", "+00:00")
+                            ).replace(tzinfo=None)
+                        except (ValueError, TypeError):
+                            pub_date = datetime.now()
+                    else:
+                        # Fallback for legacy format
+                        pub_time = content.get("providerPublishTime", 0)
+                        pub_date = datetime.fromtimestamp(pub_time) if pub_time else datetime.now()
                     
                     if pub_date < cutoff_date:
                         continue
                     
+                    # Extract provider name
+                    provider = content.get("provider", {})
+                    source = (
+                        provider.get("displayName", "Yahoo Finance")
+                        if isinstance(provider, dict)
+                        else content.get("publisher", "Yahoo Finance")
+                    )
+                    
+                    # Extract URL
+                    canonical = content.get("canonicalUrl", {})
+                    url = (
+                        canonical.get("url", "")
+                        if isinstance(canonical, dict)
+                        else content.get("link", "")
+                    )
+                    
                     all_news.append({
-                        "title": item.get("title", ""),
-                        "content": item.get("summary", item.get("title", "")),
-                        "source": item.get("publisher", "Yahoo Finance"),
-                        "url": item.get("link", ""),
+                        "title": content.get("title", ""),
+                        "content": content.get("summary", content.get("title", "")),
+                        "source": source,
+                        "url": url,
                         "published_at": pub_date.isoformat(),
                         "related_tickers": [ticker],
                     })
@@ -95,7 +126,8 @@ class YahooFinanceNews(NewsProvider):
         logger.info(
             "Fetched news",
             tickers=len(tickers),
-            items=len(all_news),
+            items_found=len(all_news),
+            items_dropped=total_fetched - len(all_news),
         )
         
         return all_news
