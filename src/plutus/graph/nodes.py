@@ -145,7 +145,7 @@ async def risk_assessor_node(state: PlutusState) -> dict:
             
             signals = result.get("risk_signals", [])
             should_notify = any(
-                s.get("signal") in ["exit", "reduce"] 
+                s.get("signal") in ["exit", "reduce", "accumulate"] 
                 for s in signals
             )
             
@@ -290,12 +290,29 @@ async def report_generator_node(state: PlutusState) -> dict:
                     action = "Maintain current position"
                     growth = "➡️ Neutral outlook"
                 
+                # Find relevant news
+                relevant_news = []
+                for item in state.top_news_items:
+                    related = [t.upper() for t in item.get("related_tickers", [])]
+                    if ticker.upper() in related:
+                        relevant_news.append(item)
+                
+                news_section = ""
+                if relevant_news:
+                    news_section = "\n**Latest News:**\n"
+                    for news in relevant_news[:2]:
+                        summary = news.get("summary", "")
+                        if len(summary) > 150:
+                            summary = summary[:147] + "..."
+                        news_section += f"- {summary}\n"
+                
                 signals_lines.append(
                     f"### {icon} {ticker}: {signal}\n"
                     f"**Reason:** {reason}\n"
                     f"**Confidence:** {confidence:.0%}\n"
                     f"**Expected Growth:** {growth}\n"
-                    f"**📌 Call to Action:** {action}"
+                    f"**📌 Call to Action:** {action}\n"
+                    f"{news_section}"
                 )
             
             sections.append("## ⚡ Risk Signals\n" + "\n\n".join(signals_lines))

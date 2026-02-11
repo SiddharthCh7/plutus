@@ -84,27 +84,9 @@ class YahooFinanceNews(NewsProvider):
                     if pub_date < cutoff_date:
                         continue
                     
-                    # Extract provider name
-                    provider = content.get("provider", {})
-                    source = (
-                        provider.get("displayName", "Yahoo Finance")
-                        if isinstance(provider, dict)
-                        else content.get("publisher", "Yahoo Finance")
-                    )
-                    
-                    # Extract URL
-                    canonical = content.get("canonicalUrl", {})
-                    url = (
-                        canonical.get("url", "")
-                        if isinstance(canonical, dict)
-                        else content.get("link", "")
-                    )
-                    
                     all_news.append({
                         "title": content.get("title", ""),
                         "content": content.get("summary", content.get("title", "")),
-                        "source": source,
-                        "url": url,
                         "published_at": pub_date.isoformat(),
                         "related_tickers": [ticker],
                     })

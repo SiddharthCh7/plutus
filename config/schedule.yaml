@@ -5,8 +5,8 @@ tasks:
   # Portfolio monitoring - checks your holdings
   portfolio_monitor:
     enabled: true
-    start_time: "09:00"  # IST - market open
-    frequency_mins: 60   # Every hour during market
+    start_time: "09:16"  # IST - market open
+    frequency_mins: 120   # Every hour during market
     end_time: "16:00"    # IST - market close
     agents:
       - portfolio_tracker
@@ -17,8 +17,8 @@ tasks:
   # Opportunity discovery - find new investment ideas
   opportunity_discovery:
     enabled: true
-    start_time: "08:00"
-    frequency_mins: 240  # Every 4 hours
+    start_time: "13:00"
+    frequency_mins: 1440  # Every 4 hours
     agents:
       - news_monitor
       - market_analyst
@@ -29,8 +29,8 @@ tasks:
   # News digest - keeps news cache fresh (shared by other tasks)
   news_digest:
     enabled: true
-    start_time: "07:00"
-    frequency_mins: 30   # Every 30 mins
+    start_time: "09:15"
+    frequency_mins: 60   # Every 30 mins
     agents:
       - news_monitor
     description: "Fetch and cache latest market news"

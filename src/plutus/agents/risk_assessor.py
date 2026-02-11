@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from datetime import datetime
+
 from plutus.agents.base import BaseAgent
 from plutus.logging import get_logger
 
@@ -60,6 +62,11 @@ TSLA|REDUCE|0.6|Increasing competition concerns in EV space"""
         
         # Build context
         builder = self.create_context_builder()
+        builder.add_raw_text(
+            "Current Date",
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            priority=4,
+        )
         builder.add_raw_text("Portfolio", portfolio_summary, priority=3)
         builder.add_raw_text("News", news_digest, priority=2)
         builder.add_raw_text(

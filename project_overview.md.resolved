@@ -1,0 +1,119 @@
+# Plutus Project Overview
+
+## 1. System Architecture
+Plutus is a generic, multi-agent AI financial portfolio manager. It uses a **Supervisor/Coordinator** pattern implemented with **LangGraph** to orchestrate specialized agents.
+
+### High-Level Flow
+1.  **Trigger:** Tasks are triggered via CLI ([main.py](file:///Users/siddharth/Desktop/Code/plutus/src/plutus/main.py)) or Scheduler ([scheduler.py](file:///Users/siddharth/Desktop/Code/plutus/src/plutus/scheduler.py)).
+2.  **State Initialization:** [PlutusState](file:///Users/siddharth/Desktop/Code/plutus/src/plutus/graph/state.py#34-146) is initialized with the user's portfolio.
+3.  **Coordination:** The `Coordinator` agent decides which specialist agents to invoke based on the task type.
+4.  **Execution:** Agents run in parallel or sequence (defined by the graph), updating the shared state.
+5.  **Reporting:** `ReportGenerator` synthesizes the state into a human-readable markdown report.
+6.  **Notification:** `Notifier` sends the report via configured channels (Email, etc.) if critical issues are found.
+
+---
+
+## 2. Core Components
+
+### 2.1 CLI ([src/plutus/main.py](file:///Users/siddharth/Desktop/Code/plutus/src/plutus/main.py))
+Built with `Typer` and `Rich`.
+- `plutus run [task]`: Executes a specific workflow.
+- `plutus research [ticker]`: Triggers the [DeepResearchAgent](file:///Users/siddharth/Desktop/Code/plutus/src/plutus/agents/deep_research.py#23-232) for a single stock.
+- `plutus schedule`: Lists active cron jobs.
+- `plutus portfolio`: Displays current holdings.
+
+### 2.2 Task Scheduler ([src/plutus/scheduler.py](file:///Users/siddharth/Desktop/Code/plutus/src/plutus/scheduler.py))
+Built with `APScheduler`.
+- Reads [config/schedule.yaml](file:///Users/siddharth/Desktop/Code/plutus/config/schedule.yaml).
+- Uses **Cron Triggers** to schedule tasks (e.g., "Every hour 9:16-16:00").
+- Tasks:
+    - `portfolio_monitor`: Checks holdings (Prices, P&L, Risk).
+    - `opportunity_discovery`: Scans for new ideas.
+    - `news_digest`: Fetches/caches global market news.
+
+### 2.3 Workflow Engine ([src/plutus/graph/workflow.py](file:///Users/siddharth/Desktop/Code/plutus/src/plutus/graph/workflow.py))
+Built with `LangGraph`.
+- Defines a `StateGraph`.
+- **Coordinator Node:** The central router.
+- **Conditional Edges:** Logic to route from Coordinator to Specialists and back.
+- **State:** [PlutusState](file:///Users/siddharth/Desktop/Code/plutus/src/plutus/graph/state.py#34-146) Pydantic model.
+
+---
+
+## 3. Agents & Responsibilities
+All agents inherit from `BaseAgent` and reside in `src/plutus/agents/`.
+
+| Agent | Responsibility | Key Inputs | Key Outputs |
+|-------|----------------|------------|-------------|
+| **PortfolioTracker** | Fetches real-time prices, calculates P&L. | `portfolio_tickers` | `market_snapshot` (Price, Change%) |
+| **NewsMonitor** | Fetches & summarizes news. | `portfolio_tickers` | `news_digest` (Summary), `top_news_items` |
+| **RiskAssessor** | Evaluates holdings for exit signals. | `news_digest`, `market_snapshot` | `risk_signals` (EXIT/REDUCE/HOLD) |
+| **MarketAnalyst** | Technical/Fundamental analysis. | `market_snapshot` | `trending_analysis` |
+| **DeepResearch** | Comprehensive single-stock report. | `ticker` | `research_report` (Markdown) |
+| **OpportunityScout** | Finds new investment ideas. | `trending_analysis`, `news_digest` | `opportunities` |
+| **TrendInterpreter** | Analyzes macro trends. | `news_digest` | `trend_insights` |
+
+---
+
+## 4. Data Flow & State Management (`src/plutus/graph/state.py`)
+The `PlutusState` object acts as the "blackboard" shared among agents.
+
+### Key Fields
+- **`task_type`**: Determines which agents need to run.
+- **`portfolio_summary`**: Text summary of holdings.
+- **`market_snapshot`**: Dictionary of real-time market data.
+- **`news_digest`**: Summarized text of relevant news.
+- **`risk_signals`**: List of signals (`{ticker, signal, confidence, reason}`).
+- **`final_report`**: The generated output.
+
+### Context Engineering
+Each agent filters the state to receive only relevant context via `get_context_for_agent()`.
+- *Example:* `RiskAssessor` needs `news_digest` and `market_snapshot`, but `PortfolioTracker` only needs `tickers`.
+
+---
+
+## 5. Tools & Integrations
+
+### 5.1 News fetching (`src/plutus/tools/news.py`)
+- **Provider:** `YahooFinanceNews` (wrapper around `yfinance`).
+- **Logic:** Fetches news for specific tickers.
+- **Filtering:**
+    - Default lookback: **7 days**.
+    - **Smart Fallback:** If 7-day search yields 0 items, retries with **30-day** window (to handle quiet stocks).
+- **Data Structure:** Simplified output containing only:
+    - `title`
+    - `content` (Summary)
+    - `published_at` (ISO format)
+    - *(Source/URL metadata is stripped to reduce noise)*
+
+### 5.2 Market Data (`src/plutus/tools/market_data.py`)
+- Uses `yfinance`.
+- Fetches real-time price, volume, and change percentage.
+
+### 5.3 LLM Integration
+- Uses **Google Gemini** (default) via `BaseAgent`.
+- Agents have specific system prompts defined in `get_system_prompt()`.
+
+---
+
+## 6. Configuration & Environment (`src/plutus/config.py`)
+Configuration is managed via **Pydantic Settings**, loading from `.env` and YAML files.
+
+- **`.env`**: Secrets (`GOOGLE_API_KEY`, etc.).
+- **`config/schedule.yaml`**: Task schedules (user-editable).
+- **`config/models.yaml`**: LLM provider settings (e.g., overriding formatting models).
+
+---
+
+## 7. Logging & Observability (`src/plutus/logging.py`)
+
+### Logging
+- Uses **structlog** for structured logging.
+- **Formats:**
+    - `JSON` (Production/Cloud-ready).
+    - `Console` (Local development, pretty-printed).
+- **Storage:** Configurable to file or stdout.
+
+### Observability
+- **Langfuse:** Tracing for LLM calls/Agent workflows.
+- **Qdrant:** Vector database for long-term memory (stores news embeddings).

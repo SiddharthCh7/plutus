@@ -73,11 +73,12 @@ Never include full article text - only summarized insights."""
                 
                 summarized_items.append({
                     "title": item.get("title"),
-                    "source": item.get("source"),
+                    "source": item.get("source", ""),
                     "summary": summary_result.summary,
                     "sentiment": summary_result.sentiment,
                     "key_signals": summary_result.key_signals,
                     "entities": summary_result.entities,
+                    "related_tickers": item.get("related_tickers", []),
                 })
             except Exception as e:
                 logger.warning("Failed to summarize news", error=str(e))

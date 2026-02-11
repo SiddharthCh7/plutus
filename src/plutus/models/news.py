@@ -22,8 +22,8 @@ class NewsItem(BaseModel):
     """A single news item."""
     
     title: str = Field(..., description="News headline")
-    source: str = Field(..., description="News source")
-    url: str = Field(..., description="Article URL")
+    source: str = Field("", description="News source")
+    url: str = Field("", description="Article URL")
     published_at: datetime = Field(..., description="Publication timestamp")
     
     # Content (summarized, not raw)
